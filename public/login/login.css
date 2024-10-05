@@ -1,0 +1,89 @@
+@media screen and (max-width:991px){
+    h1{
+        font-size: 3em;
+    }
+    .button{
+        width: auto;
+    }
+    .username, .password,.confirm_password{
+        display: flex;
+        flex-direction: column;
+        width:90%
+    }
+    .container{
+        width: 100%;
+        padding-bottom: 1%;
+    }
+    .container-pw{
+        padding-bottom: 1%;
+    }
+}
+
+@media screen and (min-width:992px){
+    h1{
+        font-size: 5em;
+    }
+    .username, .password,.confirm_password{
+        display: flex;
+        flex-direction: row;
+        width:75%
+    }
+}
+
+body {
+    font-size: 100%;
+    align-content: center;
+    background-color: #7289da;
+}
+h1 {
+    text-align: center;
+    color: white;
+    margin: auto;
+}
+div {
+    padding:0.2%;
+    font-size: 100%;
+    height: auto;
+    width: 50%;
+    margin: auto;
+}
+.container{
+    align-items: center;
+    justify-content: center;
+    font-size: 150%;
+}
+#username,#password{
+    width:100%;
+}
+label{
+    height: auto;
+    width: 70%;
+    color: white;
+}
+input{
+    height: auto;
+    width: 70%;
+    font-size: 100%;
+}
+.button{
+    text-align: center;
+}
+#login{
+    height: 10%;
+    width: 50%;
+    margin: auto;
+    border-radius: 50vh;
+    background-color: #2c2f33;
+    color:white;
+    text-align: center;
+    font-size: 150%;
+}
+a{
+    text-align: center;
+    color: white;
+}
+.container-pw{
+    align-content: center;
+    font-size: 150%;
+    text-align: center;
+}
