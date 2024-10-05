@@ -1,2 +1,2 @@
 # TIC2601
-Fitness Tracking Web Application Project
+Fitness Web Application Project
