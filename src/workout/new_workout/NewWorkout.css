@@ -1,0 +1,30 @@
+.header-newWorkout{
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    width: 100%;
+    position: absolute;
+    top: 0%;
+    height:5%;
+    background-color: #2c2f33;
+}
+#done-newWorkout,#cancel-newWorkout{
+    background-color: #2c2f33;
+    margin: auto;
+    border-radius: 50vh;
+    color:white;
+    text-align: center;
+    height: 40%;
+    width:120%;
+    font-size: 150%;
+}
+.newWorkoutBtn{
+    text-align: center;
+    padding: 1%;
+
+}
+.btn-newWorkout{
+    display: flex;
+    justify-content: center;
+    height: 25%;
+}

@@ -1,0 +1,63 @@
+#menu-workout{
+    height: 18%;
+    width: 100%;
+    position: absolute;
+    top: 0%;
+}
+.menu_1-workout, .menu_2-workout{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #2c2f33;
+    outline: 0;
+    width: 100%;
+    height: calc(100%/3);    
+}
+.menu_1-workout li, .menu_2-workout li{
+    display: inline;
+    float:left;
+    text-align: center;
+    align-content: center;
+    height: 100%;
+}
+.menu_1-workout li{
+    float: right;
+    width: 5%;
+}
+.menu_2-workout li{
+    width: 10%;
+}
+.search-workout{
+    width: 100%;
+    padding: 0%;
+    margin: 0%;
+    background-color: #2c2f33;
+    display: inline-block;
+    height: calc(100%/3);
+}
+.searchBar-workout{
+    width: 70%;
+    height: 80%;
+    float: left;
+    padding-right: 0.5%;
+}
+#searchBar-workout{
+    height: 100%;
+    font-size: 1em;
+    width: 99%;
+    padding-left: 1%;
+}
+#searchBtn-workout{
+    float: left;
+    width: 3%;
+    text-align: left;
+    display: block;
+    height: 100%;
+}
+#add-workout{
+    float: right;
+    width: 5%;
+    display: block;
+    height: 100%;
+}

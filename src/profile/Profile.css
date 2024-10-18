@@ -1,0 +1,50 @@
+
+.weight-profile,.bodyFat-profile,.waistLine-profile{
+    width:90%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1%;
+}
+.btn-profile{
+    display: flex;
+    justify-content: center;
+    height: 30%;
+    padding-top: 1%;
+}
+.btn-profile div{
+    width: 10%;
+    justify-content: center;
+}
+#label-profile{
+    width: 30%;
+    text-align: right;
+    padding-right: 2%;
+}
+#weight-profile, #bodyFat-profile, #waistLine-profile{
+    width:100%;
+    height: auto;
+    width: 70%;
+    font-size: 150%;
+}
+.measurements-profile{
+    font-size: 150%;
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
+.measurements-profile fieldset{
+    width: 90%;
+}
+#edit-profile,#cancel-profile{
+    background-color: #2c2f33;
+    margin: auto;
+    border-radius: 50vh;
+    color:white;
+    text-align: center;
+    height: 30%;
+    width: 90%;
+    font-size: 150%;
+}
