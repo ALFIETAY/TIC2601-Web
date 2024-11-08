@@ -1,0 +1,95 @@
+.header-workout{
+    width: 100%;
+    height:5%;
+    background-color: #2c2f33;
+}
+#update-workout,#done-workout{
+    background-color: #2c2f33;
+    margin: 5px;
+    border-radius: 50vh;
+    color:white;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    font-size: 150%;
+}
+.workoutBtn{
+    text-align: center;
+    padding: 5px;
+}
+.btn-workout{
+    display: flex;
+    justify-content: center;
+    height: 10%;
+    width: 100%;
+}
+
+#workout-workout{
+    width:95%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: 1.5em;
+    background-color: #99aab5;
+}
+
+#workout-workout th, #workout-workout td{
+    width:25%;
+    padding: 0%;
+    border: 2px solid black;
+    text-align: center;
+    /* color: white; */
+}
+
+#container-workout{
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.field-workout{
+    width: 95%;
+    font-size: 1.5em;
+    color: white;
+    margin: 1%;
+}
+
+.field-workout .workoutBtn{
+    margin-top: 1%;
+    padding: 0%;
+    height: 100%;
+}
+.field-workout div{
+    margin: 5px;
+}
+
+.field-workout #update-workout{
+    font-size: 100%;
+    width: auto;
+    margin-left: 2%;
+}
+
+#label-workout{
+    width: 150px;
+    text-align: right;
+    padding-right: 2%;
+    display: inline-block;
+}
+
+#fatigue-workout{
+    height: auto;
+    width: 250px;
+    font-size: 100%;
+}
+
+#remove-workout{
+    background-color:#2c2f33;
+    color: white;
+    font-size:100%;
+    width: 50%;
+    border:0px;
+    padding: 0px;
+    margin: 2%;
+    border-radius: 50vh;
+}

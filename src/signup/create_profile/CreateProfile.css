@@ -22,6 +22,7 @@
     display: flex;
     justify-content: center;
     height: 30%;
+    width: 100%;
 }
 .btn-createProfile div{
     display: flex;
@@ -48,6 +49,7 @@
     justify-content: center;
     align-items: center;
     margin: auto;
+    flex-direction: column;
 }
 .measurements-createProfile fieldset{
     width: 90%;
@@ -59,4 +61,13 @@
     justify-content: space-between;
     text-align: center;
     padding: 1%;
+}
+
+#container-createProfile {
+    font-size: 100%;
+    align-content: center;
+    background-color: #7289da;
+    justify-content: center;
+    margin:0;
+    height: 100%;
 }

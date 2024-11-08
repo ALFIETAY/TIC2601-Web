@@ -6,10 +6,10 @@ import Login from './login/Login';
 import ForgetPassword from './login/forget_password/ForgetPassword'
 import Home from './home/Home';
 import Profile from './profile/Profile';
-import Workout from './workout/Workout';
-import Exercise from './workout/exercise/Exercise';
-import NewWorkout from './workout/new_workout/NewWorkout';
-import NewExercise from './workout/exercise/new_exercise/NewExercise';
+import Workouts from './workouts/Workouts';
+import Workout from './workouts/workout/Workout';
+import Exercise from './workouts/exercise/Exercise';
+import NewExercise from './workouts/exercise/new_exercise/NewExercise';
 import CreateProfile from './signup/create_profile/CreateProfile';
 
 
@@ -23,10 +23,10 @@ function AppRoutes(){
                 <Route path='/login/forget_password' element={<ForgetPassword/>}/>
                 <Route path='/home' element={<Home/>}/>
                 <Route path='/profile' element={<Profile/>}/>
-                <Route path='/workout' element={<Workout/>}/>
-                <Route path='/workout/exercise' element={<Exercise/>}/>
-                <Route path='/workout/new_workout' element={<NewWorkout/>}/>
-                <Route path='/workout/exercise/new_exercise' element={<NewExercise/>}/>
+                <Route path='/workouts' element={<Workouts/>}/>
+                <Route path='/workouts/workout' element={<Workout/>}/>
+                <Route path='/workouts/exercise' element={<Exercise/>}/>
+                <Route path='/workouts/exercise/new_exercise' element={<NewExercise/>}/>
                 <Route path='/signup/create_profile' element={<CreateProfile/>}/>
             </Routes>
         </Router>

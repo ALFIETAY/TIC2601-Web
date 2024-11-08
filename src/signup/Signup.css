@@ -38,12 +38,13 @@
     text-align: right;
     padding-right: 2%;
 }
-#root {
+#container-signup {
     font-size: 100%;
     align-content: center;
     background-color: #7289da;
     justify-content: center;
     margin:0;
+    height: 100%;
 }
 #header-signup {
     text-align: center;

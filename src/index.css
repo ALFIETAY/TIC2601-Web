@@ -1,8 +1,10 @@
 body{
     margin: 0%;
+    background-color: #7289da;
 }
 #root{
     margin: 0%;
-    width: auto;
+    width: 100vw;
+    height: 100vh;
     padding: 0%;
 }
