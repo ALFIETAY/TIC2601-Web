@@ -84,7 +84,6 @@ const newWorkout = async(event, userID, navigate) =>{
     event.preventDefault();
 
     //set up data for api
-    // const date = DATE();
     const data = {user_id: userID};
 
     //try to create new workout
