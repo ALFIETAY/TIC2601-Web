@@ -85,7 +85,7 @@ const newWorkout = async(event, userID, navigate) =>{
 
     //set up data for api
     // const date = DATE();
-    const data = {user_id: userID, workout_date: '2024-11-08'};
+    const data = {user_id: userID};
 
     //try to create new workout
     try{
