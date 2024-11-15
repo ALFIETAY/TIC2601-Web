@@ -3,7 +3,7 @@ import './NewExercise.css';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 
 //create new exercise of user
-const create = async (event, userID, name, primary, secondary, navigate) => {
+const create = async (event, userID, token, name, primary, secondary, navigate) => {
     event.preventDefault();
 
     //set up data for api
@@ -14,7 +14,8 @@ const create = async (event, userID, name, primary, secondary, navigate) => {
         const response = await fetch (`http://localhost:5001/api/exercises/add_exercise`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data),
         });
@@ -29,13 +30,16 @@ const create = async (event, userID, name, primary, secondary, navigate) => {
 }
 
 //remove existing exercise
-const removeExercise = async (event,userID,exerciseID, navigate) => {
+const removeExercise = async (event,userID,token,exerciseID, navigate) => {
     event.preventDefault();
 
     //try to delete exercise
     try{
         const response = await fetch (`http://localhost:5001/api/exercises/${userID}/${exerciseID}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         })
         if (response.status === 200){
             alert('Exercise deleted successfully');
@@ -48,12 +52,15 @@ const removeExercise = async (event,userID,exerciseID, navigate) => {
 }
 
 //get all existing exercises of user
-const getExercises = async (userID,setExercises) =>{
+const getExercises = async (token,setExercises) =>{
 
     //try to get exercises
     try{
-        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise/${userID}`,{
+        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise`,{
             method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
         //if successful, set as table data
         if(response.status === 200){
@@ -68,7 +75,7 @@ const getExercises = async (userID,setExercises) =>{
 
 function NewExercise(){
     const navigate=useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
     //default values
     const [name, setName] =  useState('');
@@ -77,11 +84,13 @@ function NewExercise(){
     const [exercises,setExercises] = useState([]);
 
     //get userID from previous page
-    const {userID} = location.state || '';
+    // const {information} = location.state || '';
+    const userID = localStorage.getItem('userID');
+    const token = localStorage.getItem('token');
 
     //get exercises only when there is a change in userID, i.e. on load
     useEffect(()=>{
-        getExercises(userID,setExercises);
+        getExercises(token,setExercises);
     },[userID]);
 
     return (
@@ -106,13 +115,13 @@ function NewExercise(){
                             <td>{exercise.primary_muscle}</td>
                             <td>{exercise.secondary_muscle}</td>
                             <td>
-                                <button id='remove-newExercise' onClick={(e) => removeExercise(e,userID,exercise.exercise_id, navigate)}>Remove</button>
+                                <button id='remove-newExercise' onClick={(e) => removeExercise(e,userID,token, exercise.exercise_id, navigate)}>Remove</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
                 </table>
-                <form id='form-newExercise' onSubmit={(e) => create(e,userID,name,primary,secondary, navigate)}>
+                <form id='form-newExercise' onSubmit={(e) => create(e,userID,token,name,primary,secondary, navigate)}>
                     <fieldset className='field-newExercise'>
                         <legend>New Exercise</legend>
                         <div className='exerciseName-newExercise'>

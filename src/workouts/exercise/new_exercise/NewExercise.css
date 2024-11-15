@@ -6,6 +6,7 @@
     height:5%;
     background-color: #2c2f33;
 }
+
 #done-newExercise,#add-newExercise{
     background-color: #2c2f33;
     margin: auto;
@@ -15,17 +16,21 @@
     height: 100%;
     width:100%;
     font-size: 150%;
+    cursor: pointer;
 }
+
 .newExerciseBtn{
     text-align: center;
     padding: 1%;
 
 }
+
 .btn-newExercise{
     display: flex;
     justify-content: center;
     height: auto;
 }
+
 .field-newExercise  {
     width: 95%;
     font-size: 1.5em;
@@ -35,6 +40,7 @@
     flex-direction: column;
     justify-content: space-between;
 }
+
 #label-newExercise{
     width: 200px;
     text-align: right;
@@ -61,6 +67,7 @@
     padding: 0px;
     margin: 2%;
     border-radius: 50vh;
+    cursor: pointer;
 }
 
 #exercise-newExercise{

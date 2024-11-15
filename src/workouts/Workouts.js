@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import './Workouts.css';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
-// import { DATE } from 'sequelize';
 
 //get all workouts of user
-const getWorkouts = async (userID,setWorkouts) => {
+const getWorkouts = async (userID, token, setWorkouts) => {
     //try to get all workouts of user
     try{
         const response= await fetch(`http://localhost:5001/api/workouts/schedule/${userID}`,{
             method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
 
         //if successful, set data for table
@@ -23,13 +25,16 @@ const getWorkouts = async (userID,setWorkouts) => {
 };
 
 //delete workout of user
-const deleteWorkout = async (event,userID,workoutID,navigate) =>{
+const deleteWorkout = async (event,userID, token, workoutID,navigate) =>{
     event.preventDefault();
 
     //try to delete workout
     try{
         const response = await fetch(`http://localhost:5001/api/workouts/${userID}/${workoutID}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
 
         //if successful, give an alert and refresh page
@@ -45,15 +50,15 @@ const deleteWorkout = async (event,userID,workoutID,navigate) =>{
 };
 
 //table data for workouts
-const AllWorkouts = ({userID, deload}) =>{
+const AllWorkouts = ({userID, token}) =>{
     const navigate = useNavigate();
-
+    
     //default value
     const [workouts, setWorkouts] = useState([]);
-    
+
     //get all workouts when there is change in userID, i.e. on load
     useEffect (()=>{
-        getWorkouts(userID,setWorkouts);
+        getWorkouts(userID, token, setWorkouts);
     }, [userID]);
 
     return (
@@ -65,7 +70,7 @@ const AllWorkouts = ({userID, deload}) =>{
                             <td>{workout.fatigue_rating}</td>
                             <td><u>{workout.deload? 'ACTIVE':'INACTIVE'}</u></td>
                             <td>
-                                <Link to='/workouts/workout' state={{userID: userID, workoutID: workout.workout_id, deload: deload}}>
+                                <Link to='/workouts/workout' state={{workoutID: workout.workout_id}}>
                                     <button id='btn-workouts'>View</button>
                                 </Link>
                             </td>
@@ -80,7 +85,7 @@ const AllWorkouts = ({userID, deload}) =>{
 };
 
 //create new workout
-const newWorkout = async(event, userID, navigate) =>{
+const newWorkout = async(event, userID, token, navigate) =>{
     event.preventDefault();
 
     //set up data for api
@@ -91,7 +96,8 @@ const newWorkout = async(event, userID, navigate) =>{
         const response = await fetch (`http://localhost:5001/api/workouts/add_workout`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data),
         });
@@ -111,30 +117,33 @@ function Workouts(){
     const navigate = useNavigate();
 
     //get userID and deload status from previous page
-    const {userID, username, deload} = location.state || {};
+    // const information = location.state || {};
+    const userID = localStorage.getItem('userID');
+    const token = localStorage.getItem('token');
+    
     return (
         <>
-            <nav id='menu-workouts'>
-                <ul className="menu_1-workouts">
+            <nav id='menu'>
+                <ul className="menu_1">
                     <li>
-                        <Link to="/workouts" state={{userID: userID, username: username, deload: deload}} className='menu-link active' tabIndex={3}>
+                        <Link to="/workouts" className='menu-link active' tabIndex={3}>
                             <i className="fa-solid fa-dumbbell"></i>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/profile" state={{userID: userID, username:username, deload: deload}} className='menu-link' tabIndex={2}>
+                        <Link to="/profile" className='menu-link' tabIndex={2}>
                             <i className="fa-solid fa-user"></i>
                         </Link>
                     </li>
                 </ul>
-                <ul className="menu_2-workouts">
+                <ul className="menu_2">
                     <li>
-                        <Link to="/home" state={{userID: userID, username:username, deload: deload}} className='menu-link' tabIndex={1}>
+                        <Link to="/home" className='menu-link' tabIndex={1}>
                             <i className="fa-solid fa-house"></i>
                         </Link>
                     </li>
                     <li style={{float: "right"}}>
-                        <Link to="/" className='menu-link' tabIndex={4}>
+                        <Link to="/" className='menu-link' tabIndex={4} onClick={(e)=>{e.preventDefault();localStorage.removeItem('token');navigate('/');}}>
                             Log out
                         </Link>
                     </li>
@@ -152,11 +161,11 @@ function Workouts(){
                             <th>Delete</th>
                         </tr>
                     </thead>
-                    <AllWorkouts userID={userID} deload={deload}/>
+                    <AllWorkouts userID={userID} token={token}/>
                 </table>
             </div>
             <div className='add-workouts'>
-                    <button id='add-workouts' onClick={(e)=> newWorkout(e,userID,navigate)}>New Workout</button>
+                    <button id='add-workouts' onClick={(e)=> newWorkout(e,userID, token,navigate)}>New Workout</button>
             </div>
         </>
     );

@@ -3,10 +3,13 @@ import './Profile.css';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 
 //get last logged measurement of user
-const getLatestMeasurement = async (userID,setWeight,setBodyFat,setWaistLine) =>{
+const getLatestMeasurement = async (userID,token, setWeight,setBodyFat,setWaistLine) =>{
     try{
         const response = await fetch (`http://localhost:5001/api/measurements/latest/${userID}`, {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
         if (response.status === 200){
             const data = await response.json();
@@ -23,7 +26,7 @@ const getLatestMeasurement = async (userID,setWeight,setBodyFat,setWaistLine) =>
 }
 
 //update measurements
-const update = async (event,buttonText,setText, setDisabled, userID, weight, bodyFat, waistLine) => {
+const update = async (event,buttonText,setText, setDisabled, userID, token, weight, bodyFat, waistLine) => {
     event.preventDefault();
 
     //enable edit mode
@@ -41,7 +44,8 @@ const update = async (event,buttonText,setText, setDisabled, userID, weight, bod
         const response = await fetch (`http://localhost:5001/api/measurements/add`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data),
         });
@@ -60,7 +64,7 @@ const update = async (event,buttonText,setText, setDisabled, userID, weight, bod
 }
 
 //cancel
-const cancel = (event, userID,username,deload, buttonText,setText,setDisabled,navigate) =>{
+const cancel = (event, buttonText, setText, setDisabled, navigate) =>{
     event.preventDefault();
     
     //disable edit mode if is currently in edit mode
@@ -70,57 +74,59 @@ const cancel = (event, userID,username,deload, buttonText,setText,setDisabled,na
         return;
     }
     //else return to home page
-    navigate('/home', {state: {userID: userID, username:username}});
+    navigate('/home');
 }
 
 function Profile(){
-    const location = useLocation();
+    // const location = useLocation();
 
     //get userID and deload status from previous page
-    const {userID, username, deload} = location.state || {};
+    // const {userID, username, deload} = location.state || {};
+    const userID = localStorage.getItem('userID');
+    const token = localStorage.getItem('token');
 
     //set default values
     const [buttonText,setText] = useState('Edit');
     const [disabled,setDisabled] = useState(true);
-    const [weight, setWeight] = useState('0');
-    const [bodyFat, setBodyFat] = useState('0');
-    const [waistLine, setWaistLine]=useState('0');
+    const [weight, setWeight] = useState(0);
+    const [bodyFat, setBodyFat] = useState(0);
+    const [waistLine, setWaistLine]=useState(0);
     const navigate = useNavigate();
 
     //get latest measurement of user once there is a change in userID
     useEffect(() => {
-        getLatestMeasurement(userID, setWeight, setBodyFat, setWaistLine);
+        getLatestMeasurement(userID, token, setWeight, setBodyFat, setWaistLine);
     }, [userID]);
-
     return (
         <>
             <nav id='menu'>
                 <ul className="menu_1">
                     <li tabIndex="3">
-                        <Link to="/workouts" state={{userID: userID, username: username, deload: deload}} className='menu-link'>
+                        <Link to="/workouts" className='menu-link'>
                             <i className="fa-solid fa-dumbbell"></i>
                         </Link>
                     </li>
                     <li tabIndex="2">
-                        <Link to="/profile" state={{userID: userID, username: username, deload: deload}} className='menu-link active'>
+                        <Link to="/profile" className='menu-link active'>
                             <i className="fa-solid fa-user"></i>
                         </Link>
                     </li>
                 </ul>
                 <ul className="menu_2">
                     <li tabIndex="1">
-                        <Link to="/home" state={{userID: userID, username: username, deload: deload}} className='menu-link'>
+                        <Link to="/home" className='menu-link'>
                             <i className="fa-solid fa-house"></i>
                         </Link>
                     </li>
                     <li tabIndex="4" style={{float: "right"}}>
-                        <Link to="/" className='menu-link'>
+                        
+                    <Link to="/" className='menu-link' tabIndex={4} onClick={(e)=>{e.preventDefault();localStorage.clear();navigate(0);}}>
                             Log out
                         </Link>
                     </li>
                 </ul>
             </nav>
-            <form className='measurements-profile' onSubmit={(event) => update(event,buttonText,setText, setDisabled, userID, weight, bodyFat, waistLine)}>
+            <form className='measurements-profile' onSubmit={(event) => update(event,buttonText,setText, setDisabled, userID, token, weight, bodyFat, waistLine)}>
                 <fieldset>
                     <legend>Measurements</legend>
                     <div className="weight-profile">
@@ -141,7 +147,7 @@ function Profile(){
                     <button id='edit-profile' type='submit'>{buttonText}</button>
                 </div>
                 <div>
-                    <button id='cancel-profile' onClick={(event) => cancel(event, userID,username,deload, buttonText, setText, setDisabled, navigate)}>Cancel</button>
+                    <button id='cancel-profile' onClick={(event) => cancel(event, buttonText, setText, setDisabled, navigate)}>Cancel</button>
                 </div>
             </div>
             </form>

@@ -1,13 +1,14 @@
-.email-login, .password-login{
+.email-login, .password-login {
     display: flex;
     flex-direction: row;
     align-content: center;
     align-self: center;
-    width:50%;
-    padding:0.5%;
+    width: 50%;
+    padding: 0.5%;
     margin: 0%;
 }
-#p-login{
+
+#p-login {
     display: flex;
     flex-direction: row;
     color: white;
@@ -17,7 +18,8 @@
     padding: 0%;
     margin: 0%;
 }
-.empty-login{
+
+.empty-login {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -28,7 +30,8 @@
     justify-content: center;
     align-items: center;
 }
-#empty-login{
+
+#empty-login {
     float: left;
     width: 48%;
     visibility: hidden;
@@ -39,15 +42,17 @@
     align-content: center;
     background-color: #7289da;
     justify-content: center;
-    margin:0;
+    margin: 0;
     height: 100%;
 }
+
 #header-login {
     text-align: center;
     color: white;
     margin: auto;
     font-size: 5em;
 }
+
 .container-login {
     align-items: center;
     justify-content: center;
@@ -56,34 +61,40 @@
     display: flex;
     flex-direction: column;
 }
-#email-login, #email-login, #password-login, #confirm_password-login{
-    width:100%;
+
+#email-login, #password-login, #confirm_password-login {
+    width: 100%;
     height: auto;
     width: 70%;
     font-size: 100%;
 }
-#label-login{
+
+#label-login {
     height: auto;
     color: white;
     width: 30%;
     text-align: right;
     padding-right: 2%;
 }
-.button-login{
+
+.button-login {
     text-align: center;
     width: 30%;
 }
-#login-login{
+
+#login-login {
     height: 10%;
     width: 50%;
     margin: auto;
     border-radius: 50vh;
     background-color: #2c2f33;
-    color:white;
+    color: white;
     text-align: center;
     font-size: 150%;
+    cursor: pointer;
 }
-.container-forgetpw{
+
+.container-forgetpw {
     align-content: center;
     text-align: center;
 }

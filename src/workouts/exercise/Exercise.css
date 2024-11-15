@@ -15,6 +15,7 @@
     height: auto;
     width:105%;
     font-size: 2em;
+    cursor: pointer;
 }
 .exerciseBtn{
     text-align: center;
@@ -58,6 +59,7 @@
     padding: 0px;
     margin: 2%;
     border-radius: 50vh;
+    cursor: pointer;
 }
 
 #label-exercise{
@@ -99,6 +101,7 @@
     height: 40%;
     width: auto;
     font-size: 1em;
+    cursor: pointer;
 }
 
 .add-exercise{

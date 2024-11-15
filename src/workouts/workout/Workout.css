@@ -12,6 +12,7 @@
     height: 100%;
     width: 100%;
     font-size: 150%;
+    cursor: pointer;
 }
 .workoutBtn{
     text-align: center;
@@ -68,6 +69,7 @@
     font-size: 100%;
     width: auto;
     margin-left: 2%;
+    cursor: pointer;
 }
 
 #label-workout{

@@ -3,11 +3,14 @@ import './Workout.css';
 import {useLocation,Link} from 'react-router-dom';
 
 //get all exercises in workout
-const getWorkoutExercises = async (workoutID,setWorkoutExercises) => {
+const getWorkoutExercises = async (workoutID, token, setWorkoutExercises) => {
     //try to get all exercises
     try{
         const response= await fetch(`http://localhost:5001/api/workouts/exercises/${workoutID}`,{
             method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
 
         //if successful, set data for table
@@ -22,13 +25,13 @@ const getWorkoutExercises = async (workoutID,setWorkoutExercises) => {
 };
 
 //get all exercises in workout
-const AllWorkoutExercises = ({workoutID}) =>{
+const AllWorkoutExercises = ({workoutID, token}) =>{
     //default data for table (empty)
     const [workoutExercises, setWorkoutExercises] = useState([]);
 
     //get all exercises in workout when workoutID change, i.e. on load
     useEffect (()=>{
-        getWorkoutExercises(workoutID,setWorkoutExercises);
+        getWorkoutExercises(workoutID,token,setWorkoutExercises);
     }, [workoutID]);
 
     return (
@@ -51,7 +54,7 @@ const AllWorkoutExercises = ({workoutID}) =>{
 };
 
 //update fatigue rating
-const updateFatigue = async (event,workoutID, fatigue) =>{
+const updateFatigue = async (event,token, workoutID, fatigue) =>{
     event.preventDefault();
 
     //set up data for api
@@ -62,7 +65,8 @@ const updateFatigue = async (event,workoutID, fatigue) =>{
         const response = await fetch(`http://localhost:5001/api/workouts/fatigue_rating/${workoutID}`,{
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data)
         });
@@ -82,8 +86,9 @@ function Workout(){
     const location = useLocation();
 
     //get userID and workoutID from previous page
-    const  {userID, workoutID,deload} = location.state || {};
-
+    const  {workoutID} = location.state || {};
+    const token = localStorage.getItem('token');
+    // const userID = localStorage.getItem('userID');
     //default value
     const [fatigue, setFatigue] = useState('');
     
@@ -108,7 +113,7 @@ function Workout(){
                             <option value={9}>9</option>
                             <option value={10}>10 - Most Fatigue</option>
                         </select>
-                        <button onClick={(e) => updateFatigue(e, workoutID, fatigue)} id='update-workout'>Update</button>
+                        <button onClick={(e) => updateFatigue(e, token, workoutID, fatigue)} id='update-workout'>Update</button>
                     </div>
                 </fieldset>
                 <table id='workout-workout'>
@@ -124,18 +129,18 @@ function Workout(){
                             <th>Superset ID</th>
                         </tr>
                     </thead>
-                    <AllWorkoutExercises workoutID={workoutID}/>
+                    <AllWorkoutExercises workoutID={workoutID} token = {token}/>
                 </table>
                 <div className="btn-workout">
                 <div className='workoutBtn'>
                 </div>
                     <div className='workoutBtn'>
-                        <Link to='/workouts/exercise' state={{userID: userID, workoutID: workoutID}}>
+                        <Link to='/workouts/exercise' state={{workoutID: workoutID}}>
                             <button id='update-workout'>Edit Workout</button>
                         </Link>
                     </div>
                     <div className='workoutBtn'>
-                        <Link to='/workouts' state={{userID,deload}}>
+                        <Link to='/workouts'>
                             <button id='done-workout'>Done</button>
                         </Link>
                     </div>

@@ -4,7 +4,7 @@ import {Link,useLocation,useNavigate} from 'react-router-dom';
 
 
 //remove exercise from workout
-const removeExercise = async (event,ID, supersetID, navigate) => {
+const removeExercise = async (event,token, ID, supersetID, navigate) => {
     event.preventDefault();
 
     //if exercise has a supersetID, delete the supersetID
@@ -18,7 +18,8 @@ const removeExercise = async (event,ID, supersetID, navigate) => {
             const response = await fetch(`http://localhost:5001/api/superset/remove`,{
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `bearer ${token}`
                 },
                 body: JSON.stringify(data),
             });
@@ -36,7 +37,10 @@ const removeExercise = async (event,ID, supersetID, navigate) => {
     //try to remove exercise
     try{
         const response = await fetch(`http://localhost:5001/api/workouts/workout_exercises/${ID}`,{
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
 
         //if successful, give an alert and refresh page
@@ -52,11 +56,14 @@ const removeExercise = async (event,ID, supersetID, navigate) => {
 };
 
 //get exercises of workout
-const getWorkoutExercises = async (workoutID,set) => {
+const getWorkoutExercises = async (workoutID, token, set) => {
     //try to get exercises of workout
     try{
         const response= await fetch(`http://localhost:5001/api/workouts/exercises/${workoutID}`,{
             method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
 
         //if successful, set data for table
@@ -71,13 +78,15 @@ const getWorkoutExercises = async (workoutID,set) => {
 };
 
 //get exercises for dropdown
-const getExercises = async (userID,setExercises) =>{
+const getExercises = async (token, setExercises) =>{
     //try to get exercises of user
     try{
-        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise/${userID}`,{
+        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise`,{
             method: 'GET',
+            headers: {
+                'Authorization': `bearer ${token}`
+            }
         });
-
 
         if(response.status === 200){
             const data = await response.json();
@@ -90,13 +99,14 @@ const getExercises = async (userID,setExercises) =>{
 };
 
 //create superset
-const createSuperset = async (workoutID,userID,exerciseID,superset) =>{
+const createSuperset = async (workoutID,userID,exerciseID,superset, token) =>{
     try{
         const data = {workout_id:workoutID,user_id:userID, ids:[exerciseID,superset]};
         const response = await fetch (`http://localhost:5001/api/superset/create`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data),
         });
@@ -113,7 +123,7 @@ const createSuperset = async (workoutID,userID,exerciseID,superset) =>{
 }
 
 //Add exercise to workout
-const AddExercise = async (event, workoutID, userID, exerciseID, sets, reps, weight, superset, navigate) =>{
+const AddExercise = async (event, workoutID, userID, token, exerciseID, sets, reps, weight, superset, navigate) =>{
     event.preventDefault();
 
     //initialise supersetID
@@ -127,7 +137,8 @@ const AddExercise = async (event, workoutID, userID, exerciseID, sets, reps, wei
         const response = await fetch (`http://localhost:5001/api/exercises/record_workout_exercise`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `bearer ${token}`
             },
             body: JSON.stringify(data),
         });
@@ -152,7 +163,9 @@ function Exercise(){
     const location = useLocation();
 
     //get userID and workoutID from previous page
-    const {userID, workoutID, deload} = location.state || '';
+    const {workoutID} = location.state || '';
+    const userID = localStorage.getItem('userID');
+    const token = localStorage.getItem('token');
 
     //default values
     const [exercises, setExercises] = useState([]);
@@ -169,16 +182,16 @@ function Exercise(){
     //get all exercises of user when change in userID, i.e. on load
     useEffect(()=>{
         //for dropdown
-        getExercises(userID,setExercises);
+        getExercises(token, setExercises);
     },[userID]);
 
     //get exercises in workout when there is change in workoutID, i.e. on load
     useEffect(()=>{
         //for table
-        getWorkoutExercises(workoutID,setWorkoutExercises);
+        getWorkoutExercises(workoutID,token,setWorkoutExercises);
 
         //for dropdown
-        getWorkoutExercises(workoutID,setSuperset);
+        getWorkoutExercises(workoutID,token,setSuperset);
     },[workoutID]);
 
     //set primary and secondary muscle on display as exerciseID change and exercises exist
@@ -226,7 +239,7 @@ function Exercise(){
                             <td>{workoutExercise.secondary_muscle}</td>
                             <td>{workoutExercise.superset_id || ''}</td>
                             <td>
-                                <button id='remove-exercise' onClick={(e)=>removeExercise(e, workoutExercise.id, workoutExercise.superset_id, navigate)}>Remove</button>
+                                <button id='remove-exercise' onClick={(e)=>removeExercise(e, token, workoutExercise.id, workoutExercise.superset_id, navigate)}>Remove</button>
                             </td>
                         </tr>
                     ))}
@@ -244,7 +257,7 @@ function Exercise(){
                                     {exercises.map((exercise)=>
                                         (<option key={exercise.exercise_id} value={exercise.exercise_id}>{exercise.exercise_name}</option>))}
                                 </select>
-                                <Link to='/workouts/exercise/new_exercise' state={{userID, exercises}}>
+                                <Link to='/workouts/exercise/new_exercise' state={exercises}>
                                     <button id='new-exercise' >New Exercise</button>
                                 </Link>
                             </div>
@@ -270,7 +283,7 @@ function Exercise(){
                             </div>
                             <div>
                                 <label id='label-exercise' htmlFor='superset-exercise'>Superset with: </label>
-                                <select id='superset-exercise' value={supersetExerciseID} onChange={(e)=>{console.log(e.target.value);setSupersetExerciseID(e.target.value)}} >
+                                <select id='superset-exercise' value={supersetExerciseID} onChange={(e)=>setSupersetExerciseID(e.target.value)} >
                                     <option></option>
                                     {superset.map((exercise)=>
                                         (<option key={exercise.id} value={exercise.id}>{exercise.id}. {exercise.exercise_name}</option>))}
@@ -281,10 +294,10 @@ function Exercise(){
             </div>
             <div className="btn-exercise">
                 <div className='exerciseBtn'>
-                        <button id='add-exercise' onClick={(e)=> AddExercise(e,workoutID, userID, exerciseID, sets, reps, weight, supersetExerciseID, navigate)}>Add to workout</button>
+                        <button id='add-exercise' onClick={(e)=> AddExercise(e,workoutID, userID, token, exerciseID, sets, reps, weight, supersetExerciseID, navigate)}>Add to workout</button>
                 </div>
                 <div className='exerciseBtn'>
-                    <Link to='/workouts/workout' state={{userID, workoutID, deload}}>
+                    <Link to='/workouts/workout' state={{workoutID}}>
                         <button id='done-exercise'>Done</button>
                     </Link>
                 </div>

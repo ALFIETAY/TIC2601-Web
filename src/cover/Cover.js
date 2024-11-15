@@ -17,7 +17,7 @@ function Cover() {
           <button tabIndex={2} id='login-cover'>Login</button>
         </Link>
       </div>
-  </div>
+    </div>
   );
 }
 

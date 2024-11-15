@@ -28,7 +28,10 @@ const createUser = async(event,username, email,password,confirm_password,navigat
         //if successful, go to create profile, pass userID and username to the page
         if(response.status === 200){
             const user = await response.json();
-            navigate('/signup/create_profile', {state: {userID: user.user.userId, username: user.user.username}});
+            localStorage.setItem('userID', user.user.userId);
+            localStorage.setItem('username',user.user.username);
+            // localStorage.setItem('token',user.token);
+            navigate('/signup/create_profile');
         }
         //else if user already exist
         else if (response.status === 400){
