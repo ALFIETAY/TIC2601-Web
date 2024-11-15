@@ -3,6 +3,7 @@ import './ForgetPassword.css';
 import { useNavigate } from 'react-router-dom';
 
 const serverPort = 3001;
+
 //update password
 const updatePw = async (event, email, newPassword, confirmPassword, navigate) => {
     event.preventDefault();
@@ -21,7 +22,7 @@ const updatePw = async (event, email, newPassword, confirmPassword, navigate) =>
 
     //try to update password
     try {
-        const response = await fetch(`http://localhost:${serverPort}/api/users/profile`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/users/forget`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
