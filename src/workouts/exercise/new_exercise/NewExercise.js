@@ -2,6 +2,8 @@ import React, { useState,useEffect } from 'react';
 import './NewExercise.css';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 
+const serverPort = 3001;
+
 //create new exercise of user
 const create = async (event, userID, token, name, primary, secondary, navigate) => {
     event.preventDefault();
@@ -11,7 +13,7 @@ const create = async (event, userID, token, name, primary, secondary, navigate) 
 
     //try to create new exercise
     try{
-        const response = await fetch (`http://localhost:5001/api/exercises/add_exercise`,{
+        const response = await fetch (`http://localhost:${serverPort}/api/exercises/add_exercise`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,7 +37,7 @@ const removeExercise = async (event,userID,token,exerciseID, navigate) => {
 
     //try to delete exercise
     try{
-        const response = await fetch (`http://localhost:5001/api/exercises/${userID}/${exerciseID}`,{
+        const response = await fetch (`http://localhost:${serverPort}/api/exercises/${userID}/${exerciseID}`,{
             method: 'DELETE',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -56,7 +58,7 @@ const getExercises = async (token,setExercises) =>{
 
     //try to get exercises
     try{
-        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise`,{
+        const response= await fetch(`http://localhost:${serverPort}/api/exercises/all_exercise`,{
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`

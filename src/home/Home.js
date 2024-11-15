@@ -3,10 +3,12 @@ import './Home.css';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Chart } from 'chart.js/auto';
 
+const serverPort = 3001;
+
 //get all logged measurements of user
 const getMeasurements = async (setMeasurementData, userID, token) => {
     try {
-        const response = await fetch(`http://localhost:5001/api/measurements/${userID}`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/measurements/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -24,7 +26,7 @@ const getMeasurements = async (setMeasurementData, userID, token) => {
 
 const getDeload = async (userID, token, setActive, setStart, setEnd, setDisabled) => {
     try {
-        const response = await fetch(`http://localhost:5001/api/deload/${userID}`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/deload/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -54,7 +56,7 @@ const updateDeload = async (event, userID, token, start, end, navigate) => {
         end_date: end
     };
     try {
-        const response = await fetch(`http://localhost:5001/api/deload/add_deload`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/deload/add_deload`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -178,7 +180,7 @@ const MeasurementChart = ({ userID, token }) => {
 //get history of exercises for the past 4 weeks
 const getExerciseHistory = async (setExerciseHistory, userID, token) => {
     try {
-        const response = await fetch(`http://localhost:5001/api/exercises/exercise_history/${userID}`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/exercises/exercise_history/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`

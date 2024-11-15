@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './Workout.css';
 import {useLocation,Link} from 'react-router-dom';
 
+const serverPort = 3001;
+
 //get all exercises in workout
 const getWorkoutExercises = async (workoutID, token, setWorkoutExercises) => {
     //try to get all exercises
     try{
-        const response= await fetch(`http://localhost:5001/api/workouts/exercises/${workoutID}`,{
+        const response= await fetch(`http://localhost:${serverPort}/api/workouts/exercises/${workoutID}`,{
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -62,7 +64,7 @@ const updateFatigue = async (event,token, workoutID, fatigue) =>{
 
     //try to update fatigue rating
     try{
-        const response = await fetch(`http://localhost:5001/api/workouts/fatigue_rating/${workoutID}`,{
+        const response = await fetch(`http://localhost:${serverPort}/api/workouts/fatigue_rating/${workoutID}`,{
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

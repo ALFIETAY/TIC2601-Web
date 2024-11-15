@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import './Profile.css';
 import {Link, useNavigate, useLocation} from 'react-router-dom';
 
+const serverPort = 3001;
+
 //get last logged measurement of user
 const getLatestMeasurement = async (userID,token, setWeight,setBodyFat,setWaistLine) =>{
     try{
-        const response = await fetch (`http://localhost:5001/api/measurements/latest/${userID}`, {
+        const response = await fetch (`http://localhost:${serverPort}/api/measurements/latest/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -41,7 +43,7 @@ const update = async (event,buttonText,setText, setDisabled, userID, token, weig
 
     //try inserting new measurement
     try{
-        const response = await fetch (`http://localhost:5001/api/measurements/add`,{
+        const response = await fetch (`http://localhost:${serverPort}/api/measurements/add`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

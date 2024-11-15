@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 
+const serverPort = 3001;
+
 //login
 const user = async (event, email, password, navigate) => {
     event.preventDefault();
@@ -11,7 +13,7 @@ const user = async (event, email, password, navigate) => {
 
     //try to login
     try {
-        const response = await fetch('http://localhost:5001/api/users/login', {
+        const response = await fetch(`http://localhost:${serverPort}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

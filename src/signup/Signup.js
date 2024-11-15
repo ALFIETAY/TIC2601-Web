@@ -2,6 +2,8 @@ import React,{useState} from 'react';
 import './Signup.css';
 import { useNavigate } from 'react-router-dom';
 
+const serverPort = 3001;
+
 //create new user
 const createUser = async(event,username, email,password,confirm_password,navigate) => {
     event.preventDefault();
@@ -17,7 +19,7 @@ const createUser = async(event,username, email,password,confirm_password,navigat
 
     //try to create user
     try{
-        const response= await fetch('http://localhost:5001/api/users/signup',{
+        const response= await fetch(`http://localhost:${serverPort}/api/users/signup`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

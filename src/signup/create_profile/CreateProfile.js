@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './CreateProfile.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+const serverPort = 3001;
+
 //create new measurement data of user
 const create = async (event, userID, token, weight, waistline, bodyFat, navigate) => {
     event.preventDefault();
@@ -11,7 +13,7 @@ const create = async (event, userID, token, weight, waistline, bodyFat, navigate
 
     //try adding measurement
     try {
-        const response = await fetch(`http://localhost:5001/api/measurements/add`, {
+        const response = await fetch(`http://localhost:${serverPort}/api/measurements/add`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

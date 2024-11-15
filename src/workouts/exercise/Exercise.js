@@ -2,7 +2,7 @@ import React, {useEffect,useState} from 'react';
 import './Exercise.css';
 import {Link,useLocation,useNavigate} from 'react-router-dom';
 
-
+const serverPort = 3001;
 //remove exercise from workout
 const removeExercise = async (event,token, ID, supersetID, navigate) => {
     event.preventDefault();
@@ -15,7 +15,7 @@ const removeExercise = async (event,token, ID, supersetID, navigate) => {
 
         //try to remove supersetID
         try{
-            const response = await fetch(`http://localhost:5001/api/superset/remove`,{
+            const response = await fetch(`http://localhost:${serverPort}/api/superset/remove`,{
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const removeExercise = async (event,token, ID, supersetID, navigate) => {
 
     //try to remove exercise
     try{
-        const response = await fetch(`http://localhost:5001/api/workouts/workout_exercises/${ID}`,{
+        const response = await fetch(`http://localhost:${serverPort}/api/workouts/workout_exercises/${ID}`,{
             method: 'DELETE',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -59,7 +59,7 @@ const removeExercise = async (event,token, ID, supersetID, navigate) => {
 const getWorkoutExercises = async (workoutID, token, set) => {
     //try to get exercises of workout
     try{
-        const response= await fetch(`http://localhost:5001/api/workouts/exercises/${workoutID}`,{
+        const response= await fetch(`http://localhost:${serverPort}/api/workouts/exercises/${workoutID}`,{
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -81,7 +81,7 @@ const getWorkoutExercises = async (workoutID, token, set) => {
 const getExercises = async (token, setExercises) =>{
     //try to get exercises of user
     try{
-        const response= await fetch(`http://localhost:5001/api/exercises/all_exercise`,{
+        const response= await fetch(`http://localhost:${serverPort}/api/exercises/all_exercise`,{
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -102,7 +102,7 @@ const getExercises = async (token, setExercises) =>{
 const createSuperset = async (workoutID,userID,exerciseID,superset, token) =>{
     try{
         const data = {workout_id:workoutID,user_id:userID, ids:[exerciseID,superset]};
-        const response = await fetch (`http://localhost:5001/api/superset/create`,{
+        const response = await fetch (`http://localhost:${serverPort}/api/superset/create`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ const AddExercise = async (event, workoutID, userID, token, exerciseID, sets, re
     
     //try to add exercise
     try{
-        const response = await fetch (`http://localhost:5001/api/exercises/record_workout_exercise`,{
+        const response = await fetch (`http://localhost:${serverPort}/api/exercises/record_workout_exercise`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

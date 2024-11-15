@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './Workouts.css';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 
+const serverPort = 3001;
+
 //get all workouts of user
 const getWorkouts = async (userID, token, setWorkouts) => {
     //try to get all workouts of user
     try{
-        const response= await fetch(`http://localhost:5001/api/workouts/schedule/${userID}`,{
+        const response= await fetch(`http://localhost:${serverPort}/api/workouts/schedule/${userID}`,{
             method: 'GET',
             headers: {
                 'Authorization': `bearer ${token}`
@@ -30,7 +32,7 @@ const deleteWorkout = async (event,userID, token, workoutID,navigate) =>{
 
     //try to delete workout
     try{
-        const response = await fetch(`http://localhost:5001/api/workouts/${userID}/${workoutID}`,{
+        const response = await fetch(`http://localhost:${serverPort}/api/workouts/${userID}/${workoutID}`,{
             method: 'DELETE',
             headers: {
                 'Authorization': `bearer ${token}`
