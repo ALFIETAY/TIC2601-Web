@@ -51,7 +51,7 @@ function CreateProfile() {
     const userID = localStorage.getItem('userID');
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
-
+    console.log(token);
     return (
         <div id='container-createProfile'>
             <div className="header-createProfile"></div>

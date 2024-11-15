@@ -1,5 +1,5 @@
 import React from 'react';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import {Navigate, Outlet, } from 'react-router-dom';
 
 const authenticate = () => {

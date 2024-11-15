@@ -30,7 +30,7 @@ const createUser = async(event,username, email,password,confirm_password,navigat
             const user = await response.json();
             localStorage.setItem('userID', user.user.userId);
             localStorage.setItem('username',user.user.username);
-            // localStorage.setItem('token',user.token);
+            localStorage.setItem('token',user.token);
             navigate('/signup/create_profile');
         }
         //else if user already exist
