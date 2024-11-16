@@ -1,52 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Home.css';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import {getMeasurements} from '../../API/measurementAPI';
+import{getExerciseHistory} from '../../API/exerciseAPI';
+import { getDeload, addDeloadPeriod } from '../../API/deloadAPI';
+import { logout } from '../../Protect';
+import { Link, useNavigate } from 'react-router-dom';
 import { Chart } from 'chart.js/auto';
-
-const serverPort = 3001;
-
-//get all logged measurements of user
-const getMeasurements = async (setMeasurementData, userID, token) => {
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/measurements/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-        if (response.status === 200) {
-            const data = await response.json();
-            setMeasurementData(data.measurements);
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
-};
-
-const getDeload = async (userID, token, setActive, setStart, setEnd, setDisabled) => {
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/deload/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-        if (response.status === 200) {
-            const data = await response.json();
-            if (data.deload) {
-                setActive(data.deload); //set deload status == true
-                setStart(data.start_date);//set start date
-                setEnd(data.end_date);//set end date
-                setDisabled(true);//disable date pickers
-                localStorage.setItem('deload', true);
-            }
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
-};
 
 const updateDeload = async (event, userID, token, start, end, navigate) => {
     event.preventDefault();
@@ -55,25 +14,10 @@ const updateDeload = async (event, userID, token, start, end, navigate) => {
         start_date: start,
         end_date: end
     };
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/deload/add_deload`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-        if (response.status === 200) {
-            navigate(0);
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
+    addDeloadPeriod(data,token,navigate);
 }
 
-const MeasurementChart = ({ userID, token }) => {
+const MeasurementChart = ({ userID, token}) => {
     const chartRef = useRef([null, null, null]);
     const [measurementData, setMeasurementData] = useState([]);
 
@@ -177,26 +121,7 @@ const MeasurementChart = ({ userID, token }) => {
     );
 };
 
-//get history of exercises for the past 4 weeks
-const getExerciseHistory = async (setExerciseHistory, userID, token) => {
-    try {
-        const response = await fetch(`http://localhost:3001/api/exercises/exercise_history/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-        if (response.status === 200) {
-            const data = await response.json();
-            setExerciseHistory(data.muscle_group_breakdown);
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
-}
-
-const ExerciseHistoryChart = ({ userID, token }) => {
+const ExerciseHistoryChart = ({ userID, token}) => {
     const chartRef = useRef(null);
     const [exerciseHistory, setExerciseHistory] = useState({});
 
@@ -262,7 +187,7 @@ const ExerciseHistoryChart = ({ userID, token }) => {
             chart.data.datasets.forEach((dataset) => {
                 // Get current background color of dataset and apply 50% opacity
                 const currentBackgroundColor = dataset.backgroundColor; //current colors
-                const rgba = currentBackgroundColor.replace(/[^,]+(?=\))/, '1'); // Change the opacity value to 1
+                const rgba = currentBackgroundColor.replace(/[^,]+(?=\))/, '1'); // Change the only opacity value to 1
                 dataset.backgroundColor = rgba;
             });
 
@@ -283,11 +208,11 @@ const ExerciseHistoryChart = ({ userID, token }) => {
 };
 
 function Home() {
-    //get userID and username
+    //get userID, username and token
     const userID = localStorage.getItem('userID');
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
-    // console.log(token);
+
     //default values
     localStorage.setItem('deload', false);//set default deload status in localstorage
     const [deload, setActive] = useState(false);
@@ -301,7 +226,6 @@ function Home() {
         getDeload(userID, token, setActive, setStart, setEnd, setDisabled);
     }, [userID]);
 
-    // const information = {userID: userID, username: username, deload: deload};
     return (
         <>
             <div id='menu'>
@@ -324,7 +248,7 @@ function Home() {
                         </Link>
                     </li>
                     <li style={{ float: "right" }}>
-                        <Link to="/" className='menu-link' tabIndex={4} onClick={(e) => { e.preventDefault(); localStorage.clear(); navigate(0) }}>
+                        <Link to="/" className='menu-link' tabIndex={4} onClick={(e) => logout(e)}>
                             Log out
                         </Link>
                     </li>
@@ -348,7 +272,7 @@ function Home() {
                         <input type='date' id='endDate-home' value={end} disabled={disabled} onChange={(e) => setEnd(e.target.value)} />
                     </div>
                     <div id='btn-home'>
-                        <button id='setDeload-home' disabled={deload} onClick={(e) => updateDeload(e, userID, start, end, navigate)}>Activate</button>
+                        <button id='setDeload-home' disabled={deload} onClick={(e) => updateDeload(e, userID, token,start, end, navigate)}>Activate</button>
                     </div>
 
                 </fieldset>
@@ -365,7 +289,7 @@ function Home() {
                 <fieldset id='musclechart-home'>
                     <legend>Muscle Load</legend>
                     <div className='chart-home'>
-                        <ExerciseHistoryChart userID={userID} token={token} />
+                        <ExerciseHistoryChart userID={userID} token ={token}/>
                     </div>
                 </fieldset>
             </div>

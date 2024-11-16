@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
-
-const serverPort = 3001;
+import {login} from '../../API/userAPI';
 
 //login
 const user = async (event, email, password, navigate) => {
@@ -12,30 +11,7 @@ const user = async (event, email, password, navigate) => {
     const data = { email, password };
 
     //try to login
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-        if (response.status === 200) {
-            const user = await response.json();
-            localStorage.setItem('token', user.token);
-            localStorage.setItem('userID', user.user.userId);
-            localStorage.setItem('username', user.user.username);
-            navigate('/home');
-            return;
-        }
-        else if (response.status === 401) {
-            alert('Wrong Username or Password');
-            return;
-        }
-    } catch (error) {
-        console.error('POST error: ', error);
-    }
-    return;
+    login(data, navigate);
 }
 
 function Login() {

@@ -1,8 +1,10 @@
 import React, {useEffect,useState} from 'react';
 import './Exercise.css';
+import {removeSuperset} from '../../../API/supersetAPI';
+import { addWorkoutExercises, getAllExercises } from '../../../API/exerciseAPI';
+import { deleteWorkoutExercises, getWorkoutExercises } from '../../../API/workoutAPI';
 import {Link,useLocation,useNavigate} from 'react-router-dom';
 
-const serverPort = 3001;
 //remove exercise from workout
 const removeExercise = async (event,token, ID, supersetID, navigate) => {
     event.preventDefault();
@@ -11,151 +13,25 @@ const removeExercise = async (event,token, ID, supersetID, navigate) => {
     if (supersetID){
         //set up data for api
         const info = supersetID.split('-');
-        const data = {workout_id:info[0], user_id:info[1], ids:[info[2],info[3]]};
+        const data = {workout_id:info[0], user_id:info[1], exercise_ids:[info[2],info[3]]};
 
         //try to remove supersetID
-        try{
-            const response = await fetch(`http://localhost:${serverPort}/api/superset/remove`,{
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `bearer ${token}`
-                },
-                body: JSON.stringify(data),
-            });
-
-            //if not successful, give an alert
-            if (response.status !== 200){
-                alert('Error while deleting superset ID');
-                return;
-            }
-        }catch (error){
-            console.error(error);
-        }
+        removeSuperset(data,token);
     }
 
     //try to remove exercise
-    try{
-        const response = await fetch(`http://localhost:${serverPort}/api/workouts/workout_exercises/${ID}`,{
-            method: 'DELETE',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        //if successful, give an alert and refresh page
-        if (response.status === 200){
-            alert('Exercise removed successfuly')
-            navigate(0);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
-    return;
+    deleteWorkoutExercises(ID,token, navigate);
 };
-
-//get exercises of workout
-const getWorkoutExercises = async (workoutID, token, set) => {
-    //try to get exercises of workout
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/workouts/exercises/${workoutID}`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        //if successful, set data for table
-        if(response.status === 200){
-            const data = await response.json();
-            set(data.exercises);
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
-};
-
-//get exercises for dropdown
-const getExercises = async (token, setExercises) =>{
-    //try to get exercises of user
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/exercises/all_exercise`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        if(response.status === 200){
-            const data = await response.json();
-            setExercises(data.exercises);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
-};
-
-//create superset
-const createSuperset = async (workoutID,userID,exerciseID,superset, token) =>{
-    try{
-        const data = {workout_id:workoutID,user_id:userID, ids:[exerciseID,superset]};
-        const response = await fetch (`http://localhost:${serverPort}/api/superset/create`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-
-        //return creasted supersetID if successful
-        if (response.status === 200){
-            console.log(response);
-            return response.superset_id;
-        }
-    }
-    catch (error){
-        console.log(error);
-    }
-}
 
 //Add exercise to workout
 const AddExercise = async (event, workoutID, userID, token, exerciseID, sets, reps, weight, superset, navigate) =>{
     event.preventDefault();
 
-    //initialise supersetID
-    let supersetID = '';
-    
     //set up data for api
-    const data = {workout_id: workoutID, user_id:userID, exercise_id: exerciseID, set_number: sets, reps: reps, weight: weight, superset_id: supersetID};
+    const data = {workout_id: workoutID, user_id:userID, exercise_id: exerciseID, set_number: sets, reps: reps, weight: weight, superset_id: ''};
     
     //try to add exercise
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/record_workout_exercise`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, create supersetID if required
-        if (response.status === 200){
-            const data = await response.json();
-            const id = data.workoutExercise.id;
-            if (superset){
-                supersetID = await createSuperset(workoutID,userID, id,superset);
-            }
-            navigate(0);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
+    addWorkoutExercises(data, token, navigate, superset);
 }
 
 function Exercise(){
@@ -170,19 +46,19 @@ function Exercise(){
     //default values
     const [exercises, setExercises] = useState([]);
     const [exerciseID, setExerciseID]  = useState(0);
-    const [sets,setSets] = useState('');
-    const [reps,setReps] = useState('');
-    const [weight,setWeight] = useState('');
+    const [sets,setSets] = useState(0);
+    const [reps,setReps] = useState(0);
+    const [weight,setWeight] = useState(0);
     const [primary,setPrimary] = useState('');
     const [secondary,setSecondary] = useState('');
     const [superset,setSuperset] = useState([]);
-    const [supersetExerciseID,setSupersetExerciseID] = useState('');
+    const [supersetExerciseID,setSupersetExerciseID] = useState(0);
     const [workoutExercises, setWorkoutExercises] = useState([]);
 
     //get all exercises of user when change in userID, i.e. on load
     useEffect(()=>{
         //for dropdown
-        getExercises(token, setExercises);
+        getAllExercises(token, setExercises);
     },[userID]);
 
     //get exercises in workout when there is change in workoutID, i.e. on load
@@ -197,10 +73,14 @@ function Exercise(){
     //set primary and secondary muscle on display as exerciseID change and exercises exist
     useEffect(()=>{
         if(exerciseID){
-            const selected = exercises.find((exercise)=> String(exercise.exercise_id) === String(exerciseID));
+            const selected = exercises.find((exercise)=> Number(exercise.exercise_id) === Number(exerciseID));
             if (selected){
-                setPrimary(selected.primary_muscle);
-                setSecondary(selected.secondary_muscle);
+                if (selected.primary_muscle){
+                    setPrimary(selected.primary_muscle);
+                }
+                if (selected.secondary_muscle){
+                    setSecondary(selected.secondary_muscle);
+                }
             }
         }
         else{

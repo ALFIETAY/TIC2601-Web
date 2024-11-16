@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './ForgetPassword.css';
 import { useNavigate } from 'react-router-dom';
-
-const serverPort = 3001;
+import { updatePassword } from '../../../API/userAPI';
 
 //update password
 const updatePw = async (event, email, newPassword, confirmPassword, navigate) => {
@@ -21,29 +20,7 @@ const updatePw = async (event, email, newPassword, confirmPassword, navigate) =>
     };
 
     //try to update password
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/users/forget`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, back to login page
-        if (response.status === 200) {
-            navigate('/login');
-        }
-        //else user not found
-        else if (response.status === 404) {
-            const message = await response.json();
-            alert(message.message);
-        }
-    }
-    catch (error) {
-        console.error(error);
-        return;
-    }
+    updatePassword(data, navigate);
 }
 
 function ForgetPassword() {

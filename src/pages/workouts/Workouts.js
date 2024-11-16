@@ -1,54 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import {logout} from "../../Protect";
 import './Workouts.css';
+import { addWorkout, deleteWorkout, getAllWorkouts } from '../../API/workoutAPI';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 
-const serverPort = 3001;
-
-//get all workouts of user
-const getWorkouts = async (userID, token, setWorkouts) => {
-    //try to get all workouts of user
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/workouts/schedule/${userID}`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        //if successful, set data for table
-        if(response.status === 200){
-            const data = await response.json();
-            setWorkouts(data.workouts);
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
-};
 
 //delete workout of user
-const deleteWorkout = async (event,userID, token, workoutID,navigate) =>{
+const removeWorkout = async (event,userID, workoutID, token, navigate) =>{
     event.preventDefault();
 
-    //try to delete workout
-    try{
-        const response = await fetch(`http://localhost:${serverPort}/api/workouts/${userID}/${workoutID}`,{
-            method: 'DELETE',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        //if successful, give an alert and refresh page
-        if (response.status === 200){
-            const message = await response.json();
-            alert(message.message);
-            navigate(0);//refresh page
-        }
-    }
-    catch (error){
-        console.log(error);
-    }
+    deleteWorkout(userID, workoutID, token, navigate);
 };
 
 //table data for workouts
@@ -60,24 +21,24 @@ const AllWorkouts = ({userID, token}) =>{
 
     //get all workouts when there is change in userID, i.e. on load
     useEffect (()=>{
-        getWorkouts(userID, token, setWorkouts);
+        getAllWorkouts(userID, token, setWorkouts);
     }, [userID]);
 
     return (
                 <tbody>
                     {workouts.map((workout) => (
                         <tr key={workout.workout_id}>
-                            <td>{workout.workout_id}</td>
                             <td>{workout.workout_date}</td>
+                            <td>{workout.workout_time}</td>
                             <td>{workout.fatigue_rating}</td>
                             <td><u>{workout.deload? 'ACTIVE':'INACTIVE'}</u></td>
                             <td>
-                                <Link to='/workouts/workout' state={{workoutID: workout.workout_id}}>
+                                <Link to={`/workouts/workout/${workout.workout_id}`}>
                                     <button id='btn-workouts'>View</button>
                                 </Link>
                             </td>
                             <td>
-                                <button id='btn-workouts' onClick={(e) => deleteWorkout(e,userID, workout.workout_id,navigate)}>Delete</button>
+                                <button id='btn-workouts' onClick={(e) => removeWorkout(e,userID, workout.workout_id, token, navigate)}>Delete</button>
                             </td>
                         </tr>
                     ))}
@@ -94,24 +55,7 @@ const newWorkout = async(event, userID, token, navigate) =>{
     const data = {user_id: userID};
 
     //try to create new workout
-    try{
-        const response = await fetch (`http://localhost:5001/api/workouts/add_workout`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, refresh page
-        if (response.status === 200){
-            navigate(0);
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
+    addWorkout(data,token,navigate);
 };
 
 function Workouts(){
@@ -145,7 +89,7 @@ function Workouts(){
                         </Link>
                     </li>
                     <li style={{float: "right"}}>
-                        <Link to="/" className='menu-link' tabIndex={4} onClick={(e)=>{e.preventDefault();localStorage.removeItem('token');navigate('/');}}>
+                        <Link to="/" className='menu-link' tabIndex={4} onClick={(e)=>logout(e)}>
                             Log out
                         </Link>
                     </li>
@@ -155,8 +99,8 @@ function Workouts(){
                 <table id='workouts-workouts'>
                     <thead>
                         <tr>
-                            <th>Workout ID</th>
                             <th>Date</th>
+                            <th>Time</th>
                             <th>Fatigue Rating</th>
                             <th>Deload</th>
                             <th>View</th>

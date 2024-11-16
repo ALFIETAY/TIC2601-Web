@@ -1,8 +1,7 @@
 import React,{useState} from 'react';
 import './Signup.css';
+import { signup } from '../../API/userAPI';
 import { useNavigate } from 'react-router-dom';
-
-const serverPort = 3001;
 
 //create new user
 const createUser = async(event,username, email,password,confirm_password,navigate) => {
@@ -18,31 +17,7 @@ const createUser = async(event,username, email,password,confirm_password,navigat
     const data={username,email,password};
 
     //try to create user
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/users/signup`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, go to create profile, pass userID and username to the page
-        if(response.status === 200){
-            const user = await response.json();
-            localStorage.setItem('userID', user.user.userId);
-            localStorage.setItem('username',user.user.username);
-            localStorage.setItem('token',user.token);
-            navigate('/signup/create_profile');
-        }
-        //else if user already exist
-        else if (response.status === 400){
-            alert('Username or Email already exists');
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
+    signup(data,navigate);
     
 }
 

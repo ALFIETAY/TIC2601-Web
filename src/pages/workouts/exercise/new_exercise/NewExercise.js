@@ -1,8 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import './NewExercise.css';
-import {Link, useNavigate, useLocation} from 'react-router-dom';
-
-const serverPort = 3001;
+import {Link, useNavigate, } from 'react-router-dom';
+import { addExercise, deleteExercise, getAllExercises } from '../../../../API/exerciseAPI';
 
 //create new exercise of user
 const create = async (event, userID, token, name, primary, secondary, navigate) => {
@@ -12,68 +11,17 @@ const create = async (event, userID, token, name, primary, secondary, navigate) 
     const data = {user_id: userID, exercise_name: name, primary_muscle: primary, secondary_muscle: secondary};
 
     //try to create new exercise
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/add_exercise`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, refresh page to update table
-        if (response.status === 200){
-            navigate(0);
-        }
-    }catch(error){
-        console.error(error);
-    }
+    addExercise(data, token, navigate);
 }
 
 //remove existing exercise
 const removeExercise = async (event,userID,token,exerciseID, navigate) => {
     event.preventDefault();
-
+    
     //try to delete exercise
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/${userID}/${exerciseID}`,{
-            method: 'DELETE',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        })
-        if (response.status === 200){
-            alert('Exercise deleted successfully');
-            navigate(0);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
+    deleteExercise(userID,exerciseID,token,navigate);
 }
 
-//get all existing exercises of user
-const getExercises = async (token,setExercises) =>{
-
-    //try to get exercises
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/exercises/all_exercise`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-        //if successful, set as table data
-        if(response.status === 200){
-            const data = await response.json();
-            setExercises(data.exercises);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
-};
 
 function NewExercise(){
     const navigate=useNavigate();
@@ -92,7 +40,7 @@ function NewExercise(){
 
     //get exercises only when there is a change in userID, i.e. on load
     useEffect(()=>{
-        getExercises(token,setExercises);
+        getAllExercises(token,setExercises);
     },[userID]);
 
     return (

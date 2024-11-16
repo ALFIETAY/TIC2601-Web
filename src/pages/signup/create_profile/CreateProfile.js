@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './CreateProfile.css';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-const serverPort = 3001;
+import { addMeasurement } from '../../../API/measurementAPI';
+import { useNavigate } from 'react-router-dom';
 
 //create new measurement data of user
 const create = async (event, userID, token, weight, waistline, bodyFat, navigate) => {
@@ -12,27 +11,7 @@ const create = async (event, userID, token, weight, waistline, bodyFat, navigate
     const data = { user_id: userID, weight: weight, bodyfat_percentage: bodyFat, waistline: waistline };
 
     //try adding measurement
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/measurements/add`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-        //if successfully, go to home page
-        if (response.status === 201) {
-            navigate('/home');
-        }
-        else {
-            alert('Error creating profile.');
-        }
-    }
-    catch (error) {
-        console.error('POST error', error);
-    }
-    return;
+    addMeasurement(data, token);
 }
 
 const cancel = (event, navigate) => {
@@ -53,7 +32,7 @@ function CreateProfile() {
     const userID = localStorage.getItem('userID');
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
-    console.log(token);
+    
     return (
         <div id='container-createProfile'>
             <div className="header-createProfile"></div>

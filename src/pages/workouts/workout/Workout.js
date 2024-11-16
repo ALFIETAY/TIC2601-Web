@@ -1,30 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Workout.css';
-import {useLocation,Link} from 'react-router-dom';
-
-const serverPort = 3001;
-
-//get all exercises in workout
-const getWorkoutExercises = async (workoutID, token, setWorkoutExercises) => {
-    //try to get all exercises
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/workouts/exercises/${workoutID}`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        });
-
-        //if successful, set data for table
-        if(response.status === 200){
-            const data = await response.json();
-            setWorkoutExercises(data.exercises);
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
-};
+import {Link, useParams} from 'react-router-dom';
+import { getWorkoutExercises, updateFatigueRating } from '../../../API/workoutAPI';
 
 //get all exercises in workout
 const AllWorkoutExercises = ({workoutID, token}) =>{
@@ -63,34 +40,16 @@ const updateFatigue = async (event,token, workoutID, fatigue) =>{
     const data = {fatigue_rating: fatigue};
 
     //try to update fatigue rating
-    try{
-        const response = await fetch(`http://localhost:${serverPort}/api/workouts/fatigue_rating/${workoutID}`,{
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data)
-        });
-
-        //if successful, give an alert
-        if (response.status === 200){
-            const message = await response.json();
-            alert(message.message);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
+    updateFatigueRating(workoutID, data, token);
 };
 
 function Workout(){
-    const location = useLocation();
+    //get workoutID from previous page
+    const  {workoutID} = useParams();
 
-    //get userID and workoutID from previous page
-    const  {workoutID} = location.state || {};
+    //get token from localStorage
     const token = localStorage.getItem('token');
-    // const userID = localStorage.getItem('userID');
+
     //default value
     const [fatigue, setFatigue] = useState('');
     
