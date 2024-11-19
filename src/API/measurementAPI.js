@@ -1,4 +1,4 @@
-const serverPort = 3001;
+const serverPort = 5001;
 
 //get all logged measurements of user
 export const getMeasurements = async (setMeasurementData, userID, token) => {
@@ -21,9 +21,8 @@ export const getMeasurements = async (setMeasurementData, userID, token) => {
 
 //add measurements
 export const addMeasurement = async (data, token) => {
-    
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/measurements/add`,{
+    try {
+        const response = await fetch(`http://localhost:${serverPort}/api/measurements/add`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -31,14 +30,15 @@ export const addMeasurement = async (data, token) => {
             },
             body: JSON.stringify(data),
         });
-        if (response.status === 201){
-            alert('Measurement updated successfully');
+        if (response.status === 201) {
+            return true; // Indicate success
         }
-    }
-    catch(error){
+        return false; // Indicate failure
+    } catch (error) {
         console.error(error);
+        return false; // Indicate failure
     }
-}
+};
 
 //get last logged measurement of user
 export const getLatestMeasurement = async (userID, token, setWeight,setBodyFat,setWaistLine) =>{

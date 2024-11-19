@@ -1,5 +1,5 @@
 
-const serverPort = 3001;
+const serverPort = 5001;
 
 //get all workouts of user
 export const getAllWorkouts = async (userID, token, setWorkouts) => {
