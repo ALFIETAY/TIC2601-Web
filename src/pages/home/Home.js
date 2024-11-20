@@ -20,6 +20,7 @@ const updateDeload = async (event, userID, token, start, end, navigate) => {
 const MeasurementChart = ({ userID, token}) => {
     const chartRef = useRef([null, null, null]);
     const [measurementData, setMeasurementData] = useState([]);
+    const [currentChartIndex, setCurrentChartIndex] = useState(0);
 
     //get all measurements once there is a change in userID, in this case during login
     useEffect(() => {
@@ -72,6 +73,8 @@ const MeasurementChart = ({ userID, token}) => {
                     ]
                 },
                 options: {
+                    // responsive: false,
+                    // maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             labels: {
@@ -106,16 +109,24 @@ const MeasurementChart = ({ userID, token}) => {
         };
     }, [measurementData]);
 
+    useEffect(() => {
+        const rotationInterval = setInterval(() => {
+          setCurrentChartIndex(prevIndex => (prevIndex + 1) % 3); // Cycle through 0, 1, 2
+        }, 5000); // Change chart every 5 seconds
+    
+        return () => clearInterval(rotationInterval); // Cleanup interval on component unmount
+    }, []);
+
+      const handleChartClick = () => {
+        setCurrentChartIndex(prevIndex => (prevIndex + 1) % 3); // Cycle through 0, 1, 2 on click
+      };
+
     return (
         <>
-            <div id='chart-home'>
-                <canvas ref={(el) => (chartRef.current[0] = el)} className="measurementChart" />
-            </div>
-            <div id='chart-home'>
-                <canvas ref={(el) => (chartRef.current[1] = el)} className="measurementChart" />
-            </div>
-            <div id='chart-home'>
-                <canvas ref={(el) => (chartRef.current[2] = el)} className="measurementChart" />
+            <div id="chart-home" onClick={handleChartClick}>
+                <canvas ref={el => (chartRef.current[0] = el)} className="measurementChart" style={{ display: currentChartIndex === 0 ? "block" : "none" }} />
+                <canvas ref={el => (chartRef.current[1] = el)} className="measurementChart" style={{ display: currentChartIndex === 1 ? "block" : "none" }} />
+                <canvas ref={el => (chartRef.current[2] = el)} className="measurementChart" style={{ display: currentChartIndex === 2 ? "block" : "none" }} />    
             </div>
         </>
     );
@@ -277,22 +288,25 @@ function Home() {
 
                 </fieldset>
             </div>
-            <div className='measurementchart-home'>
-                <fieldset id='measurementchart-home'>
-                    <legend>Measurements</legend>
-                    <div className='chart-home'>
-                        <MeasurementChart userID={userID} token={token}/>
-                    </div>
-                </fieldset>
+            <div className='charts-home'>
+                <div className='measurementchart-home'>
+                    <fieldset id='measurementchart-home'>
+                        <legend>Measurements</legend>
+                        <div className='chart-home'>
+                            <MeasurementChart userID={userID} token={token}/>
+                        </div>
+                    </fieldset>
+                </div>
+                <div className='musclechart-home'>
+                    <fieldset id='musclechart-home'>
+                        <legend>Muscle Load</legend>
+                        <div className='chart-home'>
+                            <ExerciseHistoryChart userID={userID} token ={token}/>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
-            <div className='musclechart-home'>
-                <fieldset id='musclechart-home'>
-                    <legend>Muscle Load</legend>
-                    <div className='chart-home'>
-                        <ExerciseHistoryChart userID={userID} token ={token}/>
-                    </div>
-                </fieldset>
-            </div>
+            
         </>
     );
 }
