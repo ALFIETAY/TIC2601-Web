@@ -1,4 +1,4 @@
-const serverPort = 5001;
+const serverPort = 3001;
 
 //get all logged measurements of user
 export const getMeasurements = async (setMeasurementData, userID, token) => {
@@ -31,12 +31,10 @@ export const addMeasurement = async (data, token) => {
             body: JSON.stringify(data),
         });
         if (response.status === 201) {
-            return true; // Indicate success
+            alert('Measurement updated successfully');
         }
-        return false; // Indicate failure
     } catch (error) {
         console.error(error);
-        return false; // Indicate failure
     }
 };
 

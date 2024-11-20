@@ -1,4 +1,4 @@
-const serverPort = 5001;
+const serverPort = 3001;
 
 //signup
 export const signup = async(data,navigate) => {

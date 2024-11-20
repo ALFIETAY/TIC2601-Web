@@ -13,7 +13,6 @@ const create = async (event, userID, token, weight, waistline, bodyFat, navigate
     //try adding measurement
     const response = await addMeasurement(data, token);
     if (response) {
-        alert('Measurement updated successfully');
         navigate('/home');
     }
 }

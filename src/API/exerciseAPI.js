@@ -1,5 +1,5 @@
 import { createSuperset } from "./supersetAPI";
-const serverPort = 5001;
+const serverPort = 3001;
 
 //add exercise
 export const addExercise = async (data, token, navigate) =>{
