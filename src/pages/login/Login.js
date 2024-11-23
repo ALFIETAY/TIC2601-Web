@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
-import {login} from '../../API/userAPI';
-
-//login
-const user = async (event, email, password, navigate) => {
-    event.preventDefault();
-
-    //set up data for api
-    const data = { email, password };
-
-    //try to login
-    login(data, navigate);
-}
+import { login } from '../../API/userAPI';
 
 function Login() {
     //set default values
@@ -21,12 +10,22 @@ function Login() {
 
     const navigate = useNavigate();
 
+    //login
+    const user = async (event) => {
+        event.preventDefault();
+
+        //set up data for api
+        const data = { email, password };
+
+        //try to login
+        login(data, navigate);
+    }
     return (
         <div id='container-login'>
             <header>
                 <h1 id="header-login">Fitness App</h1>
             </header>
-            <form className="container-login" onSubmit={(event) => user(event, email, password, navigate)}>
+            <form className="container-login" onSubmit={(event) => user(event)}>
                 <div className="email-login">
                     <label id='label-login' htmlFor="email-login">Email: </label>
                     <input tabIndex="1" type="email" id="email-login" value={email} onChange={(e) => setEmail(e.target.value)} required />

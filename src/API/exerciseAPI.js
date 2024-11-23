@@ -1,111 +1,70 @@
 import { createSuperset } from "./supersetAPI";
-const serverPort = 3001;
+import axios from "axios";
 
 //add exercise
-export const addExercise = async (data, token, navigate) =>{
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/add_exercise`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
+export const addExercise = async (data, navigate) => {
+    axios.post(`/exercises/add_exercise`, data)
+        .then(
+            navigate(0)
+        )
+        .catch(error => {
+            console.error(error);
+            alert('Error adding exercise to library');
         });
-
-        //if successful, refresh page to update table
-        if (response.status === 200){
-            navigate(0);
-        }
-    }catch(error){
-        console.error(error);
-    }
 }
 
 //delete exercise
-export const deleteExercise = async (userID,exerciseID,token,navigate) => {
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/${userID}/${exerciseID}`,{
-            method: 'DELETE',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
-        })
-        if (response.status === 200){
-            alert('Exercise deleted successfully');
+export const deleteExercise = async (userID, exerciseID, navigate) => {
+    axios.delete(`/exercises/${userID}/${exerciseID}`)
+        .then(() => {
+            alert('Exercise deleted');
             navigate(0);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Error deleting exercise');
+        });
 }
 
 //get history of exercises for the past 4 weeks
-export const getExerciseHistory = async (setExerciseHistory, userID, token) => {
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/exercises/exercise_history/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
+export const getExerciseHistory = async (setExerciseHistory, userID) => {
+    axios.get(`/exercises/exercise_history/${userID}`)
+        .then(response => {
+            setExerciseHistory(response.data.muscle_group_breakdown);
+        })
+        .catch(error => {
+            console.error(error);
+            console.log('No exercise history found');
         });
-        if (response.status === 200) {
-            const data = await response.json();
-            setExerciseHistory(data.muscle_group_breakdown);
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
 }
 
 //record workout exercises
-export const addWorkoutExercises = async (data, token, navigate,superset) =>{
-    try{
-        const response = await fetch (`http://localhost:${serverPort}/api/exercises/record_workout_exercise`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, create supersetID if required
-        if (response.status === 200){
-            const output = await response.json();
-            const id = output.workoutExercise.id;
-            if (superset){
-                const supersetData = {workout_id: data.workout_id, user_id: data.user_id, exercise_ids:[id,superset]};
-                createSuperset(supersetData, token);
+export const addWorkoutExercises = async (data, navigate, superset) => {
+    axios.post(`/exercises/record_workout_exercise`, data)
+        .then(response => {
+            const data = response.data;
+            const id = data.workoutExercise.id;
+            //if exercise is to be in a superset, create data for superset id creation
+            if (superset) {
+                const supersetData = { workout_id: data.workout_id, user_id: data.user_id, exercise_ids: [id, superset] };
+                createSuperset(supersetData);
             }
             navigate(0);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Error adding exercise to workout.');
+        });
 }
 
 //get all exercises
-export const getAllExercises = async (token,setExercises) =>{
-
-    //try to get exercises
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/exercises/all_exercise`,{
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
-            }
+export const getAllExercises = async (setExercises) => {
+    axios.get(`/exercises/all_exercise`)
+        .then(response => {
+            setExercises(response.data.exercises);
+        })
+        .catch(error => {
+            console.error(error);
+            console.log('No exercises found');
         });
-        //if successful, set as table data
-        if(response.status === 200){
-            const data = await response.json();
-            setExercises(data.exercises);
-        }
-    }
-    catch(error){
-        console.error(error);
-    }
 };

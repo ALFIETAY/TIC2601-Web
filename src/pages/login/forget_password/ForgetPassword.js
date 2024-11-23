@@ -3,26 +3,6 @@ import './ForgetPassword.css';
 import { useNavigate } from 'react-router-dom';
 import { updatePassword } from '../../../API/userAPI';
 
-//update password
-const updatePw = async (event, email, newPassword, confirmPassword, navigate) => {
-    event.preventDefault();
-
-    //both passwords have to match before updating
-    if (newPassword !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-    }
-
-    // set data to pass into api
-    const data = {
-        email: email,
-        password: newPassword
-    };
-
-    //try to update password
-    updatePassword(data, navigate);
-}
-
 function ForgetPassword() {
     //set default values
     const [email, setEmail] = useState('');
@@ -31,12 +11,32 @@ function ForgetPassword() {
 
     const navigate = useNavigate();
 
+    //update password
+    const updatePw = async (event) => {
+        event.preventDefault();
+
+        //both passwords have to match before updating
+        if (newPassword !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        // set data to pass into api
+        const data = {
+            email: email,
+            password: newPassword
+        };
+
+        //try to update password
+        updatePassword(data, navigate);
+    };
+
     return (
         <div id='container-pw'>
             <header>
                 <h1 id='header-pw'>Fitness App</h1>
             </header>
-            <form className="container-pw" onSubmit={(event) => updatePw(event, email, newPassword, confirmPassword, navigate)}>
+            <form className="container-pw" onSubmit={(event) => updatePw(event)}>
                 <div className="email-pw">
                     <label id='label-pw' htmlFor="email-pw">Email: </label>
                     <input tabIndex={1} type="email" id="email-pw" value={email} onChange={(e) => setEmail(e.target.value)}

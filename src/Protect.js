@@ -1,6 +1,7 @@
 import React from 'react';
-import {jwtDecode} from 'jwt-decode';
-import {Navigate, Outlet } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { Navigate, Outlet } from 'react-router-dom';
+import axios from 'axios';
 
 const isTokenValid = () => {
     //get token from localStorage
@@ -11,17 +12,18 @@ const isTokenValid = () => {
         return false;
     }
 
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     //check if token expired
-    try{
+    try {
         const decodedToken = jwtDecode(token);
         const isExpired = decodedToken.exp * 1000 < Date.now();
         return !isExpired;
-    }catch (error){
+    } catch (error) {
         return false;
     }
 }
 
-export const logout = (event) =>{
+export const logout = (event) => {
     event.preventDefault();
     localStorage.clear();
     window.location.reload();
@@ -29,7 +31,7 @@ export const logout = (event) =>{
 
 const Protected = () => {
     //only allow user to go to pages if token is valid, else go to cover page
-    return isTokenValid()? <Outlet/> : <Navigate to="/"/>;
+    return isTokenValid() ? <Outlet /> : <Navigate to="/" />;
 }
 
 export default Protected;

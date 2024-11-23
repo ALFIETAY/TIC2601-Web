@@ -1,46 +1,31 @@
-const serverPort = 3001;
+import axios from "axios";
 
 //get user deload status
-export const getDeload = async (userID, token, setActive, setStart, setEnd, setDisabled) => {
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/deload/${userID}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `bearer ${token}`
+export const getDeload = async (userID, setActive, setStart, setEnd, setDisabled) => {
+    axios.get(`/deload/${userID}`)
+        .then(response => {
+            const deloadstatus = response.data;
+            if (deloadstatus.deload) {
+                setActive(true);
+                setStart(deloadstatus.start_date);
+                setEnd(deloadstatus.end_date);
+                setDisabled(true);
             }
-        });
-        if (response.status === 200) {
-            const data = await response.json();
-            if (data.deload) {
-                setActive(data.deload); //set deload status == true
-                setStart(data.start_date);//set start date
-                setEnd(data.end_date);//set end date
-                setDisabled(true);//disable date pickers
-                localStorage.setItem('deload', true);//update localStorage
-            }
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Error getting Deload Status');
+        })
 };
 
 //add deload period
-export const addDeloadPeriod = async (data, token, navigate) => {
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/deload/add_deload`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `bearer ${token}`
-            },
-            body: JSON.stringify(data),
+export const addDeloadPeriod = async (data, navigate) => {
+    axios.post(`/deload/add_deload`, data)
+        .then(
+            navigate(0)
+        )
+        .catch(error => {
+            console.error(error);
+            alert('Error adding Deload Period');
         });
-        if (response.status === 200) {
-            navigate(0);
-        }
-    }
-    catch (error) {
-        console.error(error);
-    }
 }

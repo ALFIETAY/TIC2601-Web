@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import AppRoutes from './AppRoutes';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+
+const serverPort = 3001;
+
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.defaults.headers.put['Content-Type'] = 'application/json';
+axios.defaults.baseURL = `http://localhost:${serverPort}/api`;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

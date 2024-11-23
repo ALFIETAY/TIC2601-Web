@@ -1,84 +1,54 @@
-const serverPort = 3001;
+import axios from "axios";
 
 //signup
-export const signup = async(data,navigate) => {
-    try{
-        const response= await fetch(`http://localhost:${serverPort}/api/users/signup`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, go to create profile, pass userID and username to the page
-        if(response.status === 200){
-            const user = await response.json();
-            localStorage.setItem('userID', user.user.userId);
-            localStorage.setItem('username',user.user.username);
-            localStorage.setItem('token',user.token);
+export const signup = async (data, navigate) => {
+    axios.post(`/users/signup`, data)
+        .then(response => {
+            const user = response.data.user;
+            localStorage.setItem('userID', user.userId);
+            localStorage.setItem('username', user.username);
+            localStorage.setItem('token', response.data.token);
             navigate('/signup/create_profile');
-        }
-        //else if user already exist
-        else if (response.status === 400){
-            alert('Username or Email already exists');
-        }
-    }
-    catch (error){
-        console.error(error);
-    }
+        })
+        .catch(error => {
+            if (error.response.status === 400) {
+                alert('Username or Email already registered');
+            }
+            else {
+                console.log(error);
+                alert('Error during sign up');
+            }
+        });
 }
 
 //login
-export const login = async (data, navigate) =>{
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/users/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-        if (response.status === 200) {
-            const user = await response.json();
-            localStorage.setItem('token', user.token);
-            localStorage.setItem('userID', user.user.userId);
-            localStorage.setItem('username', user.user.username);
+export const login = async (data, navigate) => {
+    axios.post(`/users/login`, data)
+        .then(response => {
+            localStorage.setItem('userID', response.data.user.userId);
+            localStorage.setItem('username', response.data.user.username);
+            localStorage.setItem('token', response.data.token);
             navigate('/home');
-            return;
-        }
-        else if (response.status === 401) {
-            alert('Wrong Username or Password');
-            return;
-        }
-    } catch (error) {
-        console.error('POST error: ', error);
-    }
+        })
+        .catch(error => {
+            if (error.status === 401) {
+                alert('Wrong username or password');
+            }
+            else {
+                console.error(error);
+                alert('Error during login');
+            }
+        });
 }
 
 //forget password
-export const updatePassword = async (data, navigate) =>{
-    try {
-        const response = await fetch(`http://localhost:${serverPort}/api/users/forget`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-
-        //if successful, back to login page
-        if (response.status === 200) {
+export const updatePassword = async (data, navigate) => {
+    axios.put(`/users/forget`, data)
+        .then(() => {
+            alert('Password updated');
             navigate('/login');
-        }
-        //else user not found
-        else if (response.status === 404) {
-            const message = await response.json();
-            alert(message.message);
-        }
-    }
-    catch (error) {
-        console.error(error);
-        return;
-    }
+        })
+        .catch(error => {
+            alert('User no found');
+        });
 }

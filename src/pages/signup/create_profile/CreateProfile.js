@@ -3,25 +3,6 @@ import './CreateProfile.css';
 import { addMeasurement } from '../../../API/measurementAPI';
 import { useNavigate } from 'react-router-dom';
 
-//create new measurement data of user
-const create = async (event, userID, token, weight, waistline, bodyFat, navigate) => {
-    event.preventDefault();
-
-    //set up data for api
-    const data = { user_id: userID, weight: weight, bodyfat_percentage: bodyFat, waistline: waistline };
-
-    //try adding measurement
-    const response = await addMeasurement(data, token);
-    if (response) {
-        navigate('/home');
-    }
-}
-
-const cancel = (event, navigate) => {
-    event.preventDefault();
-    navigate('/home');
-}
-
 function CreateProfile() {
     //default values
     const [weight, setWeight] = useState(0);
@@ -30,17 +11,33 @@ function CreateProfile() {
 
     const navigate = useNavigate();
 
-    // const location = useLocation();
-    // const {userID, username} = location.state || {}; //userID and username passed from signup
     const userID = localStorage.getItem('userID');
     const username = localStorage.getItem('username');
-    const token = localStorage.getItem('token');
-    
+
+    //create new measurement data of user
+    const create = async (event) => {
+        event.preventDefault();
+
+        //set up data for api
+        const data = { user_id: userID, weight: weight, bodyfat_percentage: bodyFat, waistline: waistline };
+
+        //try adding measurement
+        if (addMeasurement(data)) {
+            navigate('/home');
+        };
+    }
+
+    //cancel creating profile
+    const cancel = (event, navigate) => {
+        event.preventDefault();
+        navigate('/home');
+    }
+
     return (
         <div id='container-createProfile'>
             <div className="header-createProfile"></div>
             <form className='measurements-createProfile'
-                onSubmit={(event) => create(event, userID, token, weight, waistline, bodyFat, navigate)}>
+                onSubmit={(event) => create(event)}>
                 <fieldset>
                     <legend>{username} Measurements</legend>
                     <div className="weight-createProfile">
